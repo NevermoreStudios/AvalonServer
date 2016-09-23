@@ -6,9 +6,9 @@ public class DatabaseController {
 		// TODO
 	}
 	
-	public static boolean login(String username) {
-		UsersController.addUser(username);
-		return true;
+	public static User login(String username) {
+		// TODO: Implement better
+		return UsersController.addUser(username);
 	}
 	
 }

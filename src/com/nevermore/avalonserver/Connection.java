@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class SocketThread extends Thread {
+public class Connection extends Thread {
 	
 	boolean running = true;
 	Socket socket;
@@ -16,9 +16,10 @@ public class SocketThread extends Thread {
 	
 	public static final char GAME_DELIMETER = 65535;
 	public static final char CHAT_DELIMETER = 65534;
+	public static final char ROOM_DELIMETER = 65533;
 	
 	
-	public SocketThread(Socket socket) {
+	public Connection(Socket socket) {
 		try {
 			this.socket = socket;
 			this.out = new PrintWriter(socket.getOutputStream(), true);
@@ -27,7 +28,6 @@ public class SocketThread extends Thread {
 			e.printStackTrace();
 			// TODO: Error handling
 		}
-		
 	}
 	
 	public void run() {
@@ -38,9 +38,25 @@ public class SocketThread extends Thread {
 				switch(line.charAt(0)) {
 					case GAME_DELIMETER:
 						if(user == null) {
-							if(DatabaseController.login(message)) {
-								
+							user = DatabaseController.login(message);
+							if(user == null) {
+								// TODO: Error handling
+							} else {
+								out.println(GameController.stringify());
 							}
+						} else if(!user.inGame()) {
+							if(message.charAt(0) == '0') {
+								GameController.startGame(user, message.substring(1));
+							} else {
+								Game game = GameController.getGame(Integer.parseInt(message));
+								if(game.hasStarted()) {
+									user.joinGame(game);
+								} else {
+									// TODO: Error handling
+								}
+							}
+						} else {
+							user.gameEvent(message);
 						}
 						break;
 					case CHAT_DELIMETER:

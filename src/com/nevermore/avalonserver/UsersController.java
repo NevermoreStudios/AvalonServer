@@ -16,9 +16,11 @@ public class UsersController {
 		return users.get(id);
 	}
 	
-	public static void addUser(String username) {
+	public static User addUser(String username) {
 		int id = lastUserIndex++;
-		users.put(id, new User(id, username));
+		User user = new User(id, username);
+		users.put(id, user);
+		return user;
 	}
 	
 }

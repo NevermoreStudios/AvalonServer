@@ -9,7 +9,7 @@ import java.util.List;
 
 public class SocketController {
 	
-	private static List<SocketThread> sockets = new ArrayList<SocketThread>();
+	private static List<Connection> sockets = new ArrayList<Connection>();
 	public static ServerSocket server;
 	private static boolean running = true;
 	
@@ -28,7 +28,7 @@ public class SocketController {
 		try {
 			Socket socket = server.accept();
 			if(socket != null) {
-				sockets.add(new SocketThread(socket));
+				sockets.add(new Connection(socket));
 			}
         } catch(IOException e) {
         	// TODO: Error handling
@@ -40,7 +40,7 @@ public class SocketController {
 	}
 	
 	public static void broadcastChat(User user, String message) {
-		for(SocketThread socket : sockets) {
+		for(Connection socket : sockets) {
 			socket.sendChatMessage(user, message);
 		}
 	}
